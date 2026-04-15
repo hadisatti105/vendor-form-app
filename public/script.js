@@ -8,7 +8,7 @@ document.getElementById("form").addEventListener("submit", async (e) => {
   resultDiv.innerHTML = "Checking...";
 
   try {
-    const response = await fetch("/api/check-availability", {
+    const res = await fetch("/api/check-availability", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -16,23 +16,26 @@ document.getElementById("form").addEventListener("submit", async (e) => {
       body: JSON.stringify({ phoneNumber, stateCode })
     });
 
-    const result = await response.json();
+    const data = await res.json();
 
-    const apiData = result.raw?.data;
-
-    if (apiData?.agentAvailable) {
+    // ✅ Show BOTH formatted + raw JSON
+    if (data.data?.agentAvailable) {
       resultDiv.innerHTML = `
         ✅ Agent Available<br>
-        📞 Transfer Target: ${apiData.transferTarget}<br>
-        👥 Agents Available: ${apiData.agentCount}<br>
-        🕒 Time: ${apiData.timestamp}
+        📞 ${data.data.transferTarget}<br><br>
+        <b>Full Raw Response:</b>
+        <pre>${JSON.stringify(data, null, 2)}</pre>
       `;
     } else {
-      resultDiv.innerHTML = "❌ No agents available";
+      resultDiv.innerHTML = `
+        ❌ No agents available<br><br>
+        <b>Full Raw Response:</b>
+        <pre>${JSON.stringify(data, null, 2)}</pre>
+      `;
     }
 
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
+    console.error(err);
     resultDiv.innerHTML = "❌ Error occurred";
   }
 });

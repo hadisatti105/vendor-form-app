@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Leads Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h2>Leads</h2>
+
+<table border="1" id="table">
+  <thead>
+    <tr>
+      <th>Phone</th>
+      <th>State</th>
+      <th>Available</th>
+      <th>Transfer</th>
+      <th>Agents</th>
+      <th>Time</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<script>
+async function loadLeads() {
+  const res = await fetch("/api/leads");
+  const data = await res.json();
+
+  const tbody = document.querySelector("#table tbody");
+  tbody.innerHTML = "";
+
+  data.forEach(l => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${l.phoneNumber}</td>
+        <td>${l.stateCode || ""}</td>
+        <td class="${l.agentAvailable ? 'yes' : 'no'}">
+         ${l.agentAvailable ? "Yes" : "No"}
+         </td>
+        <td>${l.transferTarget || ""}</td>
+        <td>${l.agentCount}</td>
+        <td>${l.timestamp || ""}</td>
+      </tr>
+    `;
+  });
+}
+
+loadLeads();
+</script>
+
+</body>
+</html>
